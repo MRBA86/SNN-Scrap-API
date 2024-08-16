@@ -1,5 +1,4 @@
-# from test.sql_db import get_db
-# from test.news_model import News
+import logging
 from fastapi import HTTPException, status
 from database import Database
 from schemas.news_schema import CreateNews
@@ -14,8 +13,9 @@ def is_news_exist(news_id: int):
         if db_news:
             return True
         return False
-    except Exception as error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=("%s", (error,) ))
+    except Exception as e:
+        logging.error(f'There is a problem : {e}')
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
     finally:
         db.conn.close()
 def save_news(news_jadid: CreateNews):
@@ -30,8 +30,9 @@ def save_news(news_jadid: CreateNews):
                   news_jadid['news_id'], news_jadid['news_category'], news_jadid['published_date'])
         cursor.execute(query, values)
         db.conn.commit()
-    except Exception as error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=("%s", (error,) ))
+    except Exception as e:
+        logging.error(f'There is a problem : {e}')
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
     finally:
         db.conn.close()
 
@@ -50,9 +51,11 @@ def get_all_news():
                                    'published_date': row[7]})
             return total_news
         else:
+            logging.error('there is not any news in database')
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='there is not any news in database')
-    except Exception as error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=("%s", (error,)))
+    except Exception as e:
+        logging.error(f'There is a problem : {e}')
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
     finally:
         db.conn.close()
 
@@ -68,8 +71,10 @@ def get_news(news_id):
                     'news_lead': db_news[4], 'news_id': db_news[5], 'news_category': db_news[6],
                     'published_date': db_news[7]}
         else:
-            return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="News cloudn't find")
-    except Exception as error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=("%s", (error,)))
+            logging.error("News couldn't find")
+            return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="News couldn't find")
+    except Exception as e:
+        logging.error(f'There is a problem : {e}')
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
     finally:
         db.conn.close()
