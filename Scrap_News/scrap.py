@@ -25,10 +25,13 @@ def scrap_news():
                 news_category = news_details['category']
                 published_date = change_date_to_miladi(news.find('a', class_='akhbar_list_title')['title'])
                 # Check this news is existing in databases or not
+                counter = 0
                 if not is_news_exist(news_id):
                     news_jadid = {'news_url': news_url, 'image_url': image_url, 'title': title, 'news_lead': news_lead,
                                   'news_id': news_id, 'news_category': news_category, 'published_date': published_date}
                     save_news(news_jadid)
+                    counter += 1
+                return counter
         except Exception as e:
             logging.error(f'There is a problem : {e}')
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
