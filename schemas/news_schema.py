@@ -19,19 +19,3 @@ class News(NewsBase):
 
     class Config:
         orm_mode = True
-
-class NewsCategory(BaseModel):
-    category_date: tuple
-    count: int
-
-class NewsPctChange(BaseModel):
-    category_date: list
-    pct_change: float | None
-
-class NewsRollingAvg(BaseModel):
-    category_date: list
-    rolling_avg: float | None
-
-class NewsRollingStd(BaseModel):
-    category_date: tuple
-    rolling_std: float | None
